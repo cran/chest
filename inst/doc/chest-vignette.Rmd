@@ -1,0 +1,116 @@
+---
+title: "Change-in-estimate approach: Assessing confounding effects"
+output: rmarkdown::html_vignette
+author: "Zhiqiang Wang"
+vignette: >
+  %\VignetteIndexEntry{chest-vignette}
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteEncoding{UTF-8}
+---
+
+<!-- badges: start -->
+*Badges* Confounding;
+Logistic regression; 
+Cox proportional hazards model;
+Linear regression; 
+<!-- badges: end -->
+
+```{r, include = FALSE}
+knitr::opts_chunk$set(
+  collapse = TRUE,
+  comment = "#>"
+)
+```
+
+## Overview
+
+The _'chest'_ package systematically calculates and compares effect estimates from various models with different combinations of variables. It calculates the changes in effect estimates when each variable is added to the model sequentially in a step-wise fashion. Effect estimates here can be regression coefficients, odds ratios and hazard ratios depending on modelling methods. At each step, only one variable that causes the largest change among the remaining variables is added to the model. The final results from many models are summarized in one graph and one data frame table. This approach can be used for assessing confounding effects in epidemiological studies and bio-medical research including clinical trials.  
+
+## Installation
+
+You can install the released version of chest from [CRAN](https://CRAN.R-project.org) with:
+
+## Getting Started
+
+```{r setup}
+library(chest)
+names(diab_df)
+```
+### Data: diabetes and mortality 
+A data frame 'diab_df' is used to examine the association between `Diabetes` and mortality `Endpoint`. The purpose of using this data set is to demonstrate the use of the functions in this package rather than answering any research questions. 
+
+### 'chest_speedglm': report odds ratios at all steps with logistic regression models 
+
+```{r chest_speedglm_1, fig.height=3.2, fig.width = 6.4}
+chest_speedglm(
+  crude = "Endpoint ~ Diabetes",
+  xlist = c("Age", "Sex", "Married", "Smoke", "Cancer", "CVD","Education", "Income"), 
+  zero = 1, data = diab_df)
+```
+
+All Odds ratios are for the association between `Diabetes` and mortality `Endpoint` after each of other factors added to the model sequentially. 
+
+* *Step 1*: Started with a model: `speedglm(endpoint ~ diabetes)`. The odds ratio for diabetes was presented in the row marked as `Crude`.  
+
+* *Step 2*: Each of 8 variables was separately added to the above model, and  `chest_speedglm` compared odds ratios from those eight models to identify the one which created the largest change. The variable `Age` was selected and added to the model. 
+
+* *Step 3*: Repeat Step 2 with the remaining 7 variables. The variable `income` was selected and added. 
+
+* *Step 4* to *Step 9* repeated the same procedure until all variables were added. We can see after adding age and income variables add other variables had little impact on the odds ratio estimates, and odds ratio estimates remained positive on the right hand side of non-effect line. In this case, 'chest' shows one table with the results after fitting 37 total models: 1 crude model plus 36 (8 + 7 + 6 +5 + 4 + 3 + 2 + 1) models.    
+
+We can alter some details of the graph. For example, we used `zero = 1` to mark the none effective line. Users can also save the result table to data frame for further presentation and analysis. 
+
+### When the list of variables is long, or the same list to be used repeatedly, generate a object of variable list: 
+
+```{r, speedglm_2, fig.height=3.2, fig.width = 6.4}
+vlist <- c("Age", "Sex", "Married", "Smoke", "Cancer", "CVD","Education", "Income")
+chest_speedglm(
+  crude = "Endpoint ~ Diabetes",
+  xlist = vlist,   zero = 1, data = diab_df)
+```
+
+### Remove missing values, and change non-effect line
+
+```{r, speedglm_3, fig.height=3.2, fig.width = 6.4}
+chest_speedglm(
+  crude = "Endpoint ~ Diabetes", xlist = vlist, 
+  data = diab_df, zero = c(0.98, 1.02),  na_omit = TRUE)
+```
+
+## Add terms such as an interaction between Age and Sex, and age squared 
+
+```{r, speedglm_4, fig.height=3.2, fig.width = 6.4}
+library(tidyverse)
+diab_df <- diab_df %>%
+mutate(Age_Sex = Age*Sex, Age2 = Age^2)
+vlist_1<-c("Age", "Sex", "Age2", "Age_Sex", "Married", "Cancer", "CVD", "Education", "Income")
+chest_speedglm(crude = "Endpoint ~ Diabetes", xlist = vlist_1, na_omit=TRUE, data = diab_df)
+```
+### chest_glm: Logistic regression using (generalized linear models, glm). 
+'chest_glm' is slower than 'chest_speedglm'. We can use `indicate = TRUE` to monitor the progress. If it is too slow, you may want to try 'chest_speedglm'. 
+
+```{r, chest_glm, eval=FALSE}
+vlist <- c("Age", "Sex", "Married", "Smoke", "Education")
+chest_glm(crude = "Endpoint ~ Diabetes", xlist = vlist, data = diab_df, indicate = TRUE)
+```
+
+### chest_cox: Using Cox Proportional Hazards Models: 'coxph' of 'survival' package
+
+```{r, coxhp, fig.height=3.2, fig.width = 6.4}
+
+chest_cox(crude = "Surv(t0, t1, Endpoint) ~ Diabetes", xlist = vlist,
+          na_omit = TRUE, data = diab_df, zero = 1)
+```
+
+### chest_clogit: Conditional logistic regression: 'clogit' of 'survival' package
+
+```{r, clogit, fig.height=3.2, fig.width = 6.4}
+chest_clogit(crude = "Endpoint ~ Diabetes + strata(mid)", 
+             xlist = vlist, data = diab_df, zero = 1)
+```
+
+## Notes:
+* Because 'chest' fits many models and compares effect estimates, some analyses may take long time to complete. In that case, consider 'chest_speedglm' for logistic regression and 'chest_clogit' with an argument of approximate method for conditional logistic regression. 
+* Possible alternative explanations: Although a large change the presence of possible confounding effects, we also need to keep in mind alternative explanations. 
+   + Different sample sizes: When different models are fitted using different sample sizes due to missing values, this may also contribute to the change in effect estimates. The change can partly reflect the selection bias. Removing all the missing values can be helpful for distinguish the two. 
+   + Intermediate measurements: Some variables in observational studies may be the intermediate factors of the causal pathway. This is more a design issue than a analysis issue. The package can be used to identify the change-in-effect estimates but cannot be used to distinguish confounding factors from intermediate factors. 
