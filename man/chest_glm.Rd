@@ -8,21 +8,9 @@ chest_glm(
   crude,
   xlist,
   data,
-  var_lab = "Variables",
-  est_lab = "OR (95\% CI)",
-  change_lab = "Change, \%",
-  digits = "\%.2f",
-  digits_change = "\%.1f",
   family = "binomial",
   method = "glm.fit",
-  maxit = 25,
-  epsilon = 1e-08,
-  na_omit = FALSE,
-  hrzl_lines = gpar(col = "#444444"),
-  text_size = 1,
-  xlab_size = 1,
-  xtick_size = 1,
-  xlab = NULL,
+  na_omit = TRUE,
   indicate = FALSE,
   plus = "  + ",
   ...
@@ -36,37 +24,13 @@ However, any other variables can also be included here as the initial model.}
 
 \item{data}{\emph{Data frame}.}
 
-\item{var_lab}{\emph{Character} string for the column name of variables in the graph.}
-
-\item{est_lab}{\emph{Character} string for the column name of effect estimates.}
-
-\item{change_lab}{\emph{Character} string for the column name of "Changes".}
-
-\item{digits}{Set the display format for number in the graph other than the \emph{"Change"} column. Default: "\%.2f"}
-
-\item{digits_change}{Set the format for the \emph{"Change"} column. Default: "\%.1f"}
-
 \item{family}{Description of the error distribution. Default is "binomial".}
 
 \item{method}{Method to detect for singularity.}
 
-\item{maxit}{See \code{'glm'}.}
+\item{na_omit}{Remove all missing values, default: 'na_omit = TRUE'.}
 
-\item{epsilon}{See \code{'glm'}.}
-
-\item{na_omit}{Remove all missing values.}
-
-\item{hrzl_lines}{A \emph{logic} to include or remove horizontal line.}
-
-\item{text_size}{Set text size.}
-
-\item{xlab_size}{Set \code{x} label size.}
-
-\item{xtick_size}{Set \code{x} tick label size.}
-
-\item{xlab}{Add \code{x} label.}
-
-\item{indicate}{indicate progress}
+\item{indicate}{indicate progress.}
 
 \item{plus}{Change the \code{+} sign before variable names.}
 
@@ -85,15 +49,9 @@ confounders) to the model sequentially. The order of variables to be added is
 based on the magnitudes of the changes in effect estimates.
 }
 \examples{
-
 chest_glm(crude = "Endpoint ~ Diabetes", xlist = c("Age", "Sex", "Married"),
 na_omit=TRUE, data = diab_df)
-
 }
 \seealso{
-\pkg{'forestplot'}
-
 \code{'glm'} \pkg{'stats'}
-
-for effects estimates from all possible models.
 }

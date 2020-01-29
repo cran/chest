@@ -148,15 +148,7 @@ chest_cox(crude = "Surv(t0, t1, Endpoint) ~ Diabetes", xlist = vlist,
 ``` r
 chest_clogit(crude = "Endpoint ~ Diabetes + strata(mid)", 
              xlist = vlist, data = diab_df, indicate= TRUE, zero = 1)
-#> 
- 2 out of 9
- 3 out of 9
- 4 out of 9
- 5 out of 9
- 6 out of 9
- 7 out of 9
- 8 out of 9
- 9 out of 9
+#>  2 out of 9 3 out of 9 4 out of 9 5 out of 9 6 out of 9 7 out of 9 8 out of 9 9 out of 9
 ```
 
 <img src="man/figures/README-clogit-1.png" width="100%" />

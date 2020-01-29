@@ -8,17 +8,7 @@ chest_cox(
   crude,
   xlist,
   data,
-  var_lab = "Variables",
-  est_lab = "HR (95\% CI)",
-  change_lab = "Change, \%",
-  digits = "\%.2f",
-  digits_change = "\%.1f",
-  na_omit = FALSE,
-  hrzl_lines = gpar(col = "#444444"),
-  text_size = 1,
-  xlab_size = 1,
-  xtick_size = 1,
-  xlab = NULL,
+  na_omit = TRUE,
   plus = "  + ",
   indicate = FALSE,
   ...
@@ -32,27 +22,7 @@ However, any other variables can also be included here as the initial model.}
 
 \item{data}{\emph{Data frame}.}
 
-\item{var_lab}{\emph{Character} string for the column name of variables in the graph.}
-
-\item{est_lab}{\emph{Character} string for the column name of effect estimates.}
-
-\item{change_lab}{\emph{Character} string for the column name of "Changes".}
-
-\item{digits}{Set the display format for number in the graph other than the \emph{"Change"} column. Default: "\%.2f"}
-
-\item{digits_change}{Set the format for the \emph{"Change"} column. Default: "\%.1f"}
-
-\item{na_omit}{Remove all missing values.}
-
-\item{hrzl_lines}{A \emph{logic} to include or remove horizontal line.}
-
-\item{text_size}{Set text size.}
-
-\item{xlab_size}{Set \code{x} label size.}
-
-\item{xtick_size}{Set \code{x} tick label size.}
-
-\item{xlab}{Add \code{x} label.}
+\item{na_omit}{Remove all missing values, default: 'na_omit = TRUE'.}
 
 \item{plus}{Change the \code{+} sign before variable names.}
 
@@ -77,7 +47,5 @@ chest_cox(crude = "Surv(t0, t1, Endpoint) ~ Diabetes", xlist = vlist, data = dia
 
 }
 \seealso{
-\pkg{'forestplot'}
-
 \pkg{'survival'}
 }

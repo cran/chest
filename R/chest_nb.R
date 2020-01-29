@@ -1,33 +1,30 @@
-#' Assessing confounding effects using Generalized Linear regression models
+#' Assessing confounding effects using Negative Binomial regression models
 #'
-#' Please note: There is a faster option: \code{'chest_speedglm'}. \code{'chest_glm'}
-#' is used to assess confounding effects using Generalized Linear Models, such as
-#' logistic regression and Poisson regression with \code{'glm'}.
-#' It presents \emph{odds ratios} or \emph{rate ratios} for the association
-#' between exposure and outcome variables by adding other variables (potential
-#' confounders) to the model sequentially. The order of variables to be added is
-#' based on the magnitudes of the changes in effect estimates.
+#' It fits negative binomial regression models to present \emph{rate ratios} for
+#' the association between exposure and outcome variables by adding other variables
+#' (potential confounders) to the model sequentially. The order of variables to be
+#' added is based on the magnitudes of the changes in effect estimates.
 #'
 #' @export
 #' @param crude An object of \emph{formula} for initial model, generally crude model.
 #' However, any other variables can also be included here as the initial model.
 #' @param xlist A \emph{vector} of characters with all variable names of potential confounders.
 #' @param data \emph{Data frame}.
-#' @param family Description of the error distribution. Default is "binomial".
 #' @param method Method to detect for singularity.
 #' @param na_omit Remove all missing values, default: 'na_omit = TRUE'.
 #' @param plus Change the \code{+} sign before variable names.
 #' @param indicate indicate progress.
-#' @param ... Further optional arguments for forestplot.
+#' @param ... Further optional arguments.
 #' @return A table with effect estimates and their changes at all steps.
-#' @seealso \code{'glm'} \pkg{'stats'}
+#' @seealso \code{'glm.nb'} of \pkg{'MASS'}
 #' @examples
-#' chest_glm(crude = "Endpoint ~ Diabetes", xlist = c("Age", "Sex", "Married"),
-#' na_omit=TRUE, data = diab_df)
-#' @name chest_glm
-chest_glm <- function(
+#' library(MASS)
+#' df <- quine
+#' results <- chest_nb("Days ~ Lrn", xlist = c("Sex", "Age", "Eth"), data = df)
+#' results$data
+#' @name chest_nb
+chest_nb <- function(
   crude, xlist, data,
-  family = "binomial",
   method = "glm.fit",
   na_omit = TRUE,
   indicate = FALSE,
@@ -37,9 +34,8 @@ chest_glm <- function(
   n_xlist <- length(xlist)
   data <- data.frame(c(data[all.vars(as.formula(crude))], data[xlist]))
   if (na_omit) {data <- na.omit(data)}
-  mod_crude <- glm(
+  mod_crude <- MASS::glm.nb(
     as.formula(crude),
-    family = family,
     method = method,
     data = data,
     ...)
@@ -55,8 +51,8 @@ chest_glm <- function(
   variables[1] <- c("Crude")
   initial_model <- crude
   for (i in 2:(n_xlist+1)) {
-    mod <- glm(as.formula(crude),
-               family = family, method = method,
+    mod <- MASS::glm.nb(as.formula(crude),
+               method = method,
                data = data,
                ...)
     hr_0 <- broom::tidy(mod, exponentiate = TRUE)$estimate[2]
@@ -69,10 +65,10 @@ chest_glm <- function(
     chg <- (hr_1-hr_0)*100/hr_0
     lb_1 <- unlist(lapply(models, function(x)
       broom::tidy(x, exponentiate = TRUE,
-                  conf.int = T)$conf.low[2]))
+                  conf.int = TRUE)$conf.low[2]))
     ub_1  <- unlist(lapply(models, function(x)
       broom::tidy(x, exponentiate = TRUE,
-                  conf.int = T)$conf.high[2]))
+                  conf.int = TRUE)$conf.high[2]))
     n_1 <- unlist(lapply(models, function(x)
       stats::nobs(x)))
     pick[i] <- xlist[which.max(abs(chg))]
@@ -93,10 +89,8 @@ chest_glm <- function(
   out   <- data.frame(variables, est, lb, ub, Change)
   tab_out <- data.frame(out, p, n)
   row.names(tab_out) <- NULL
-  fun <- "chest_glm"
-  if (class(family) == "family") {
-    family <- family$family
-  }
+  fun <- "chest_nb"
+  family <- "negative.binomial"
   lst_ret <- list(tab_out, fun, family)
   names(lst_ret) <- c("data", "fun", "family")
   lst_ret

@@ -8,60 +8,30 @@ chest_clogit(
   crude,
   xlist,
   data,
-  var_lab = "Variables",
-  est_lab = "OR (95\% CI)",
-  change_lab = "Change, \%",
-  digits = "\%.2f",
-  digits_change = "\%.1f",
   method = "exact",
-  na_omit = FALSE,
-  hrzl_lines = gpar(col = "#444444"),
-  text_size = 1,
-  xlab_size = 1,
-  xtick_size = 1,
-  xlab = NULL,
+  na_omit = TRUE,
   plus = "  + ",
   indicate = FALSE,
   ...
 )
 }
 \arguments{
-\item{crude}{An object of \emph{formula} for initial model, generally crude model.
+\item{crude}{An object of \emph{formula} for the initial model, generally crude model.
 However, any other variables can also be included here as the initial model.}
 
 \item{xlist}{A \emph{vector} of characters with all variable names of potential confounders.}
 
 \item{data}{\emph{Data frame}.}
 
-\item{var_lab}{\emph{Character} string for the column name of variables in the graph.}
-
-\item{est_lab}{\emph{Character} string for the column name of effect estimates in the graph.}
-
-\item{change_lab}{\emph{Character} string for the column name of \emph{"Change"} in the graph}
-
-\item{digits}{Set the display format for number in the graph other than the \emph{"Change"} column. Default: "\%.2f"}
-
-\item{digits_change}{Set the format for the \emph{"Change"} column. Default: "\%.1f"}
-
 \item{method}{See 'clogit', default is the \emph{"exact"} method.}
 
-\item{na_omit}{Remove all missing values.}
-
-\item{hrzl_lines}{A logic to include or remove the horizontal line in the graph.}
-
-\item{text_size}{Set text size.}
-
-\item{xlab_size}{Set \code{x} label size.}
-
-\item{xtick_size}{Set \code{x} tick label size.}
-
-\item{xlab}{Add \code{x} label.}
+\item{na_omit}{Remove all missing values, default: 'na_omit = TRUE'.}
 
 \item{plus}{Change the \code{+} sign before variable names.}
 
 \item{indicate}{indicate the calculation progress.}
 
-\item{...}{Further optional arguments for forestplot.}
+\item{...}{Further optional arguments.}
 }
 \value{
 A table with effect estimates and their changes at all steps.
@@ -71,17 +41,12 @@ A table with effect estimates and their changes at all steps.
 models to assess confounding effects.
 }
 \examples{
-
 vlist <- c("Age", "Sex", "Married", "Cancer", "CVD", "Education", "Income")
-
 chest_clogit(crude = "Endpoint ~ Diabetes + strata(mid)",
              xlist = vlist, data = diab_df)
-
 }
 \seealso{
 chest
 
 'clogit' in \pkg{'survival'}
-
-\pkg{'forestplot'}
 }

@@ -9,17 +9,7 @@ chest_lm(
   xlist,
   data,
   method = "qr",
-  var_lab = "Variables",
-  est_lab = "Coeff. (95\% CI)",
-  change_lab = "Change, \%",
-  digits = "\%.2f",
-  digits_change = "\%.1f",
-  na_omit = FALSE,
-  hrzl_lines = gpar(col = "#444444"),
-  text_size = 1,
-  xlab_size = 1,
-  xtick_size = 1,
-  xlab = NULL,
+  na_omit = TRUE,
   indicate = FALSE,
   plus = "  + ",
   ...
@@ -35,33 +25,13 @@ However, any other variables can also be included here as the initial model.}
 
 \item{method}{The method to be used; see \pkg{'lm'}.}
 
-\item{var_lab}{\emph{Character} string for the column name of variables in the graph.}
-
-\item{est_lab}{\emph{Character} string for the column name of effect estimates in the graph.}
-
-\item{change_lab}{\emph{Character} string for the column name of \emph{"Change"} in the graph}
-
-\item{digits}{Set the display format for number in the graph other than the \emph{"Change"} column. Default: "\%.2f"}
-
-\item{digits_change}{Set the format for the \emph{"Change"} column. Default: "\%.1f"}
-
 \item{na_omit}{Remove all missing values.}
-
-\item{hrzl_lines}{A \emph{logic} to to include or remove horizontal line.}
-
-\item{text_size}{Set text size.}
-
-\item{xlab_size}{Set \code{x} label size.}
-
-\item{xtick_size}{Set \code{x} tick label size.}
-
-\item{xlab}{Add \code{x} label.}
 
 \item{indicate}{indicate progress}
 
 \item{plus}{Change the \code{+} sign before variable names.}
 
-\item{...}{Further optional arguments for forestplot.}
+\item{...}{Further optional arguments.}
 }
 \value{
 A table with effect estimates and their changes at all steps.
@@ -72,14 +42,9 @@ It presents linear regression coefficients as effect estimates and
 changes when other variables are added sequentially to the model.
 }
 \examples{
-
 vlist<-c("Age", "Sex", "Married", "Cancer", "CVD","Education", "Income")
-
 chest_lm(crude = "BMI ~ Diabetes", xlist = vlist, data = diab_df, na_omit = TRUE)
-
 }
 \seealso{
-\pkg{'forestplot'}
-
 \code{'lm'} of \pkg{'stats'}
 }

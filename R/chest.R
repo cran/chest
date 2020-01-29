@@ -16,19 +16,24 @@
 #'  are sequentially added to the model in a stepwise fashion. At each step, one
 #'  variable which creates the largest change (\%) of the effect estimate among the remaining
 #'  variables is added to the model. \code{'chest'} returns a graph and a data frame (table) with
-#'  effect estimates (95\% CI) and change (\%) values. The package currently has 5 main
+#'  effect estimates (95\% CI) and change (\%) values. The package currently has the following main
 #'  functions: \code{'chest_lm'} for linear regression, \code{'chest_glm'} for logistic
 #'  regression and Poisson regression, \code{'chest_speedglm'} using \code{'speedlm'} as
 #'  a faster alternative of \code{'chest_glm'}, \code{'chest_clogit'} for matched logistic
-#'  regression, and \code{'chest_cox'} for Cox Proportional Hazards Models.
+#'  regression, \code{'chest_nb'} for negative binomial regression and \code{'chest_cox'} for
+#'  Cox proportional hazards models.
 #'
 #' @docType package
 #' @name chest
-#' @import broom
-#' @import tidyverse
+#' @importFrom broom tidy glance
+#' @import ggplot2
+#' @importFrom tibble add_row
+#' @importFrom MASS glm.nb
+#' @import speedglm
 #' @import forestplot
 #' @import stats
 #' @import grid
+#' @importFrom dplyr mutate %>%
 #'
 #' @examples
 #'
@@ -37,6 +42,14 @@
 #' ? chest_cox
 #' ? chest_clogit
 #' ? chest_lm
+#' ? chest_nb
+#' ? chest_plot
+#' ? chest_forest
+#'
 #' @references {
-#'     Zhiqiang Wang (2007) <https://doi.org/10.1177/1536867X0700700203> }
+#' Zhiqiang Wang (2007) <https://doi.org/10.1177/1536867X0700700203> }
+#'
+#'
+utils::globalVariables(c(
+  "est", "lb", "ub", "Change", "variables", "est_values", "x_value"))
 NULL
