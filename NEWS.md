@@ -1,3 +1,6 @@
+# chest 0.3.2
+Fix a dependency issue with new version 'broom'.
+
 # chest 0.3.1
 * replaced width with height for chest_plot function
 
@@ -9,7 +12,7 @@
 * added chest_nb for negative binomial regression
 
 ## chest 0.2.1
-* chest_speedglm occationally gives incorrect p-values due to the way of speedglm handling scientific notations: fixed   
+* chest_speedglm occasionally gives incorrect p-values due to the way of speedglm handling scientific notations: fixed   
 * Incorrect observation numbers for chest_glm: fixed 
 * Changed the default 'na_omit = TRUE'.  
 * Added 'weights' to all 'chest' functions. 

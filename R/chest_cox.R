@@ -40,7 +40,7 @@ chest_cox <- function(
                                data = data,
                                ...)
   n[1] <- broom::glance(mod_crude)$n
-  mod0    <- broom::tidy(mod_crude, exponentiate = TRUE)
+  mod0    <- broom::tidy(mod_crude, exponentiate = TRUE, conf.int = TRUE)
   est[1] = mod0$estimate[1]
   lb[1] = mod0$conf.low[1]
   ub[1] = mod0$conf.high[1]

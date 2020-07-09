@@ -4,7 +4,8 @@
 \name{diab_df}
 \alias{diab_df}
 \title{Example data: Health outcomes of 2372 adults with and without diabetes}
-\format{A data frame with 2372 rows and 14 variables:
+\format{
+A data frame with 2372 rows and 14 variables:
 \describe{
   \item{Diabetes}{diabetes status 1: with diabetes 0: without diabetes }
   \item{Endpoint}{mortality status 1: reached end point, and 0: survived }
@@ -20,7 +21,8 @@
   \item{t0}{time (age) at the start of the follow-up}
   \item{t1}{time (age) at the end of the follow-up}
   \item{mid}{matched set id, for conditional logistic regression }
-  }}
+  }
+}
 \usage{
 diab_df
 }
