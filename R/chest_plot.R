@@ -64,6 +64,8 @@ chest_plot <- function(
       xlab <- "Rate ratio"
     } else if (data$family == "binomial") {
       xlab <- "Odds ratio"
+    } else if (data$family == "clogit") {
+      xlab <- "Odds ratio"
     } else {
       xlab <- "Effect estimates"
     }

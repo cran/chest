@@ -51,18 +51,18 @@ chest_cox <- function(
     mod    <- survival::coxph(as.formula(crude),
                               data = data,
                               ...)
-    hr_0   <- broom::tidy(mod, exponentiate = TRUE)$estimate[1]
+    hr_0   <- broom::tidy(mod, exponentiate = TRUE, conf.int = TRUE)$estimate[1]
     models  <- lapply(xlist, function(x)
       update(mod, as.formula(paste0(". ~ . +", x))))
     hr_1    <- unlist(lapply(models, function(x)
-      broom::tidy(x, exponentiate = TRUE)$estimate[1]))
+      broom::tidy(x, exponentiate = TRUE, conf.int = TRUE)$estimate[1]))
     p_1       <- unlist(lapply(models, function(x)
       broom::tidy(x)$p.value[1]))
     chg     <- (hr_1-hr_0)*100/hr_0
     lb_1    <- unlist(lapply(models, function(x)
-      broom::tidy(x, exponentiate = TRUE)$conf.low[1]))
+      broom::tidy(x, exponentiate = TRUE, conf.int = TRUE)$conf.low[1]))
     ub_1    <- unlist(lapply(models, function(x)
-      broom::tidy(x, exponentiate = TRUE)$conf.high[1]))
+      broom::tidy(x, exponentiate = TRUE, conf.int = TRUE)$conf.high[1]))
     n_1    <- unlist(lapply(models, function(x)
       broom::glance(x)$n))
     pick[i] <- xlist[which.max(abs(chg))]

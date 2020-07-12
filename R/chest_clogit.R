@@ -29,7 +29,7 @@ chest_clogit <- function(
   plus = "  + ",
   indicate = FALSE,
   ...) {
-  pick <- variables <- OR <- se <- Change <- p <- lb <- ub <- n<- c()
+  pick <- variables <- est <- se <- Change <- p <- lb <- ub <- n<- c()
   n_xlist <- length(xlist)
   data <- data.frame(c(data[all.vars(as.formula(crude))], data[xlist]))
   if (na_omit) {data <- na.omit(data)}
@@ -43,7 +43,7 @@ chest_clogit <- function(
     exponentiate = TRUE,
     conf.int = TRUE)
   n[1] <- broom::glance(mod_crude)$n
-  OR[1] <- mod0$estimate[1]
+  est[1] <- mod0$estimate[1]
   p[1] <- mod0$p.value[1]
   lb[1] <- mod0$conf.low[1]
   ub[1] <- mod0$conf.high[1]
@@ -74,7 +74,7 @@ chest_clogit <- function(
     xlist <- xlist[-which(xlist %in% paste0(pick[i]))]
     crude <- paste0(crude, "+", paste0(pick[i]), collapse = " + ")
     variables[i] = paste0(plus, pick[i])
-    OR[i] = hr_1[which.max(abs(chg))]
+    est[i] = hr_1[which.max(abs(chg))]
     lb[i] = lb_1[which.max(abs(chg))]
     ub[i] = ub_1[which.max(abs(chg))]
     Change[i] = chg[which.max(abs(chg))]
@@ -85,7 +85,7 @@ chest_clogit <- function(
     }
   }
   cat("\n")
-  out   <- data.frame(variables, OR, lb, ub, Change)
+  out   <- data.frame(variables, est, lb, ub, Change)
   tab_out <- data.frame(out, p, n)
   row.names(tab_out) <- NULL
   fun <- "chest_clogit"

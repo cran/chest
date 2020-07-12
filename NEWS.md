@@ -1,3 +1,6 @@
+# chest 0.3.3
+Fix a dependency issue with new version 'broom'.
+
 # chest 0.3.2
 Fix a dependency issue with new version 'broom'.
 
