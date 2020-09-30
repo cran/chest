@@ -45,11 +45,11 @@
 #' ? chest_nb
 #' ? chest_plot
 #' ? chest_forest
-#'
 #' @references {
 #' Zhiqiang Wang (2007) <https://doi.org/10.1177/1536867X0700700203> }
 #'
 #'
 utils::globalVariables(c(
-  "est", "lb", "ub", "Change", "variables", "est_values", "x_value"))
+  "est", "lb", "ub", "Change", "variables", "est_values", "x_value"
+))
 NULL

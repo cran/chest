@@ -42,7 +42,7 @@ It presents linear regression coefficients as effect estimates and
 changes when other variables are added sequentially to the model.
 }
 \examples{
-vlist<-c("Age", "Sex", "Married", "Cancer", "CVD","Education", "Income")
+vlist <- c("Age", "Sex", "Married", "Cancer", "CVD", "Education", "Income")
 chest_lm(crude = "BMI ~ Diabetes", xlist = vlist, data = diab_df, na_omit = TRUE)
 }
 \seealso{

@@ -27,32 +27,34 @@
 #' @return a ggplot object.
 #' @seealso \pkg{'ggplot2'}
 #' @examples
-#' vlist<-c("Age", "Sex", "Married", "Cancer", "CVD", "Education", "Income")
-#' results <- chest_speedglm(crude = "Endpoint ~ Diabetes",
-#'               xlist = vlist, na_omit=TRUE, data = diab_df)
+#' vlist <- c("Age", "Sex", "Married", "Cancer", "CVD", "Education", "Income")
+#' results <- chest_speedglm(
+#'   crude = "Endpoint ~ Diabetes",
+#'   xlist = vlist, na_omit = TRUE, data = diab_df
+#' )
 #' chest_plot(results)
 #' @name chest_plot
 chest_plot <- function(
-  data,
-  no_values = FALSE,
-  ylab = NULL,
-  xlab = NULL,
-  change_lab = "Change, %",
-  digits = "%.2f",
-  digits_change = "%.1f",
-  plus = "  + ",
-  nudge_y = 0.4,
-  nudge_x = NULL,
-  hjust = 0.5,
-  height = 0.06,
-  point_size = 3,
-  point_shape = 15,
-  vline_type = "dashed",
-  vline_color = "grey50",
-  ebar_color = "grey50",
-  zero = 1,
-  value_position = NULL,
-  ...) {
+                       data,
+                       no_values = FALSE,
+                       ylab = NULL,
+                       xlab = NULL,
+                       change_lab = "Change, %",
+                       digits = "%.2f",
+                       digits_change = "%.1f",
+                       plus = "  + ",
+                       nudge_y = 0.4,
+                       nudge_x = NULL,
+                       hjust = 0.5,
+                       height = 0.06,
+                       point_size = 3,
+                       point_shape = 15,
+                       vline_type = "dashed",
+                       vline_color = "grey50",
+                       ebar_color = "grey50",
+                       zero = 1,
+                       value_position = NULL,
+                       ...) {
   df <- data.frame(data$data)
   if (is.null(xlab)) {
     if (data$fun == "chest_cox") {
@@ -60,7 +62,7 @@ chest_plot <- function(
     } else if (data$fun == "chest_lm") {
       xlab <- "Coefficient"
     } else if (data$family == "poisson" |
-               data$family == "nb") {
+      data$family == "nb") {
       xlab <- "Rate ratio"
     } else if (data$family == "binomial") {
       xlab <- "Odds ratio"
@@ -73,36 +75,45 @@ chest_plot <- function(
   df$variables <- stats::reorder(df$variables, -as.numeric(rownames(df)))
   df <- df %>%
     dplyr::mutate(
-      est_values = paste0(sprintf(digits, est), " (",
-                  sprintf(digits, lb), ", ",
-                  sprintf(digits, ub), "),  ",
-                  sprintf(digits_change, Change), "%"))
+      est_values = paste0(
+        sprintf(digits, est), " (",
+        sprintf(digits, lb), ", ",
+        sprintf(digits, ub), "),  ",
+        sprintf(digits_change, Change), "%"
+      )
+    )
   if (no_values) {
-    df$est_values = " "
+    df$est_values <- " "
   } else {
-    df$est_values[1] = paste0(sprintf(digits, df$est[1]), " (",
-                      sprintf(digits, df$lb[1]), ", ",
-                      sprintf(digits, df$ub[1]), "),  ", change_lab)
+    df$est_values[1] <- paste0(
+      sprintf(digits, df$est[1]), " (",
+      sprintf(digits, df$lb[1]), ", ",
+      sprintf(digits, df$ub[1]), "),  ", change_lab
+    )
   }
   if (is.null(value_position)) {
-    df$x_value = df$est
+    df$x_value <- df$est
   } else {
-    df$x_value = value_position
-    hjust = 0
+    df$x_value <- value_position
+    hjust <- 0
   }
   df %>%
     ggplot(aes(y = variables, x = est)) +
-      geom_errorbarh(aes(xmin = lb, xmax = ub),
-                  height = height,
-                  color = ebar_color) +
-      geom_point(size = point_size, shape = point_shape) +
-      geom_vline(xintercept = zero,
-               linetype=vline_type,
-               color = vline_color) +
-      theme_classic() +
-      geom_text(aes(x = x_value, label = est_values),
-                   nudge_y = nudge_y,
-                   nudge_x = nudge_x,
-                   hjust = hjust) +
-      labs(x = xlab, y = ylab)
-  }
+    geom_errorbarh(aes(xmin = lb, xmax = ub),
+      height = height,
+      color = ebar_color
+    ) +
+    geom_point(size = point_size, shape = point_shape) +
+    geom_vline(
+      xintercept = zero,
+      linetype = vline_type,
+      color = vline_color
+    ) +
+    theme_classic() +
+    geom_text(aes(x = x_value, label = est_values),
+      nudge_y = nudge_y,
+      nudge_x = nudge_x,
+      hjust = hjust
+    ) +
+    labs(x = xlab, y = ylab)
+}

@@ -23,24 +23,24 @@
 #' chest_forest(results)
 #' @name chest_forest
 chest_forest <- function(
-  data,
-  var_lab = "Variables",
-  est_lab = "Estimate (95% CI)",
-  change_lab = "Change, %",
-  digits = "%.2f",
-  digits_change = "%.1f",
-  hrzl_lines = gpar(col="#444444"),
-  plus = "  + ",
-  ...) {
+                         data,
+                         var_lab = "Variables",
+                         est_lab = "Estimate (95% CI)",
+                         change_lab = "Change, %",
+                         digits = "%.2f",
+                         digits_change = "%.1f",
+                         hrzl_lines = gpar(col = "#444444"),
+                         plus = "  + ",
+                         ...) {
   df <- data$data
-  out_1 <- tibble::add_row(df, .before=1)
+  out_1 <- tibble::add_row(df, .before = 1)
   if (is.null(xlab)) {
     if (data$fun == "chest_cox") {
       xlab <- "Hazard ratio"
     } else if (data$fun == "chest_lm") {
       xlab <- "Coefficient"
     } else if (data$family == "poisson" |
-               data$family == "nb") {
+      data$family == "nb") {
       xlab <- "Rate ratio"
     } else if (data$family == "binomial") {
       xlab <- "Odds ratio"
@@ -52,26 +52,30 @@ chest_forest <- function(
   out_2 <- df %>%
     dplyr::transmute(
       variables,
-      est_values = paste0(sprintf(digits, est), " (",
-                          sprintf(digits, lb), ", ",
-                          sprintf(digits, ub), "),  "),
-      change = paste0(sprintf(digits_change, Change), "%"))
-  var_lab = "Variables"
-  est_lab = "OR (95% CI)"
-  change_lab = "Change, %"
+      est_values = paste0(
+        sprintf(digits, est), " (",
+        sprintf(digits, lb), ", ",
+        sprintf(digits, ub), "),  "
+      ),
+      change = paste0(sprintf(digits_change, Change), "%")
+    )
+  var_lab <- "Variables"
+  est_lab <- "OR (95% CI)"
+  change_lab <- "Change, %"
   out_2 <- tibble::add_row(
     out_2,
     variables = var_lab,
     est_values = est_lab,
     change = change_lab,
-    .before = 1)
-  out_2$change[2] = ""
+    .before = 1
+  )
+  out_2$change[2] <- ""
   forestplot::forestplot(
     out_2,
     mean = out_1$est,
     lower = out_1$lb,
     upper = out_1$ub,
     is.summary = is.summary,
-    hrzl_lines = hrzl_lines)
+    hrzl_lines = hrzl_lines
+  )
 }
-

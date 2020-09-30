@@ -44,7 +44,6 @@ The order of variables to be added is based on the magnitudes of the changes in 
 vlist <- c("Age", "Sex", "Married", "Cancer", "CVD", "Education", "Income")
 
 chest_cox(crude = "Surv(t0, t1, Endpoint) ~ Diabetes", xlist = vlist, data = diab_df)
-
 }
 \seealso{
 \pkg{'survival'}

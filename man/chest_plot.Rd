@@ -77,9 +77,11 @@ a ggplot object.
 Plot effect estimate and change-in-estimate values (ggplot type)
 }
 \examples{
-vlist<-c("Age", "Sex", "Married", "Cancer", "CVD", "Education", "Income")
-results <- chest_speedglm(crude = "Endpoint ~ Diabetes",
-              xlist = vlist, na_omit=TRUE, data = diab_df)
+vlist <- c("Age", "Sex", "Married", "Cancer", "CVD", "Education", "Income")
+results <- chest_speedglm(
+  crude = "Endpoint ~ Diabetes",
+  xlist = vlist, na_omit = TRUE, data = diab_df
+)
 chest_plot(results)
 }
 \seealso{

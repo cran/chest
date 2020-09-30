@@ -45,14 +45,13 @@ It presents the effect estimates (such as \emph{odds ratios}) for the associatio
 The order of variables to be added is based on the magnitudes of the changes in effect estimates. It returns a graph and a table with effect estimates, 95\% confidence intervals and changes (\%) at different steps.
 }
 \examples{
-vlist<-c("Age", "Sex", "Married", "Cancer", "CVD", "Education", "Income")
-chest_speedglm(crude = "Endpoint ~ Diabetes",
-              xlist = vlist, na_omit=TRUE, data = diab_df)
- # adding derived terms such as an interaction between Age and Sex, and age squared:
-diab_df$Age_Sex = diab_df$Age*diab_df$Sex
-diab_df$Age2 = diab_df$Age^2
-vlist<-c("Age", "Sex", "Age2", "Age_Sex", "Married", "Cancer", "CVD", "Education", "Income")
-chest_speedglm(crude = "Endpoint ~ Diabetes", xlist = vlist, na_omit=TRUE, data = diab_df)
+vlist <- c("Age", "Sex", "Married", "Cancer", "CVD", "Education", "Income")
+results <- chest_speedglm(
+  crude = "Endpoint ~ Diabetes",
+  xlist = vlist, na_omit = TRUE, data = diab_df
+)
+results
+chest_plot(results)
 }
 \seealso{
 \pkg{'speedglm'}

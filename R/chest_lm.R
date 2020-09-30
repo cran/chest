@@ -16,65 +16,75 @@
 #' @return A table with effect estimates and their changes at all steps.
 #' @seealso \code{'lm'} of \pkg{'stats'}
 #' @examples
-#' vlist<-c("Age", "Sex", "Married", "Cancer", "CVD","Education", "Income")
+#' vlist <- c("Age", "Sex", "Married", "Cancer", "CVD", "Education", "Income")
 #' chest_lm(crude = "BMI ~ Diabetes", xlist = vlist, data = diab_df, na_omit = TRUE)
 #' @name chest_lm
 chest_lm <- function(
-  crude, xlist, data,
-  method = "qr",
-  na_omit = TRUE,
-  indicate = FALSE,
-  plus = "  + ",
-  ...) {
-  pick <- variables <- est <- se <- Change <- p <- lb <- ub <- n<- c()
+                     crude, xlist, data,
+                     method = "qr",
+                     na_omit = TRUE,
+                     indicate = FALSE,
+                     plus = "  + ",
+                     ...) {
+  pick <- variables <- est <- se <- Change <- p <- lb <- ub <- n <- c()
   n_xlist <- length(xlist)
   data <- data.frame(c(data[all.vars(as.formula(crude))], data[xlist]))
-  if (na_omit) {data <- na.omit(data)}
+  if (na_omit) {
+    data <- na.omit(data)
+  }
   mod_crude <- lm(as.formula(crude),
-                  data = data,
-                  ...)
+    data = data,
+    ...
+  )
   mod0 <- broom::tidy(mod_crude, conf.int = TRUE)
   n[1] <- stats::nobs(mod_crude)
-  est[1] = mod0$estimate[2]
-  p[1] = mod0$p.value[2]
-  lb[1] = mod0$conf.low[2]
-  ub[1] = mod0$conf.high[2]
+  est[1] <- mod0$estimate[2]
+  p[1] <- mod0$p.value[2]
+  lb[1] <- mod0$conf.low[2]
+  ub[1] <- mod0$conf.high[2]
   variables[1] <- c("Crude")
   initial_model <- crude
-  for (i in 2:(n_xlist+1)) {
-    mod    <- lm(as.formula(crude),
-                 method = method,
-                 data = data,
-                 ...)
-    hr_0   <- broom::tidy(mod)$estimate[2]
-    models  <- lapply(xlist, function(x)
-      update(mod, as.formula(paste0(". ~ . +", x))))
-    hr_1    <- unlist(lapply(models, function(x)
-      broom::tidy(x)$estimate[2]))
-    p_1       <- unlist(lapply(models, function(x)
-      broom::tidy(x)$p.value[2]))
-    chg     <- (hr_1-hr_0)*100/hr_0
-    lb_1    <- unlist(lapply(models, function(x)
-      broom::tidy(x, conf.int = TRUE)$conf.low[2]))
-    ub_1    <- unlist(lapply(models, function(x)
-      broom::tidy(x,conf.int = TRUE)$conf.high[2]))
-    n_1 <- unlist(lapply(models, function(x)
-      stats::nobs(x)))
+  for (i in 2:(n_xlist + 1)) {
+    mod <- lm(as.formula(crude),
+      method = method,
+      data = data,
+      ...
+    )
+    hr_0 <- broom::tidy(mod)$estimate[2]
+    models <- lapply(xlist, function(x) {
+      update(mod, as.formula(paste0(". ~ . +", x)))
+    })
+    hr_1 <- unlist(lapply(models, function(x) {
+      broom::tidy(x)$estimate[2]
+    }))
+    p_1 <- unlist(lapply(models, function(x) {
+      broom::tidy(x)$p.value[2]
+    }))
+    chg <- (hr_1 - hr_0) * 100 / hr_0
+    lb_1 <- unlist(lapply(models, function(x) {
+      broom::tidy(x, conf.int = TRUE)$conf.low[2]
+    }))
+    ub_1 <- unlist(lapply(models, function(x) {
+      broom::tidy(x, conf.int = TRUE)$conf.high[2]
+    }))
+    n_1 <- unlist(lapply(models, function(x) {
+      stats::nobs(x)
+    }))
     pick[i] <- xlist[which.max(abs(chg))]
     xlist <- xlist[-which(xlist %in% paste0(pick[i]))]
     crude <- paste0(crude, "+", paste0(pick[i]), collapse = " + ")
-    variables[i] = paste0(plus, pick[i])
-    est[i] = hr_1[which.max(abs(chg))]
-    lb[i] = lb_1[which.max(abs(chg))]
-    ub[i] = ub_1[which.max(abs(chg))]
-    Change[i] = chg[which.max(abs(chg))]
-    p[i] = p_1[which.max(abs(chg))]
-    n[i] = n_1[which.max(abs(chg))]
+    variables[i] <- paste0(plus, pick[i])
+    est[i] <- hr_1[which.max(abs(chg))]
+    lb[i] <- lb_1[which.max(abs(chg))]
+    ub[i] <- ub_1[which.max(abs(chg))]
+    Change[i] <- chg[which.max(abs(chg))]
+    p[i] <- p_1[which.max(abs(chg))]
+    n[i] <- n_1[which.max(abs(chg))]
     if (indicate) {
-        cat("\r",i, "out of", n_xlist + 1)
+      cat("\r", i, "out of", n_xlist + 1)
     }
   }
-  out   <- data.frame(variables, est, lb, ub, Change)
+  out <- data.frame(variables, est, lb, ub, Change)
   tab_out <- data.frame(out, p, n)
   row.names(tab_out) <- NULL
   fun <- "chest_lm"

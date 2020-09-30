@@ -37,7 +37,6 @@ In clinical trials and epidemiological studies, the association
 ? chest_nb
 ? chest_plot
 ? chest_forest
-
 }
 \references{
 {

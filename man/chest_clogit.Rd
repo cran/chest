@@ -42,8 +42,10 @@ models to assess confounding effects.
 }
 \examples{
 vlist <- c("Age", "Sex", "Married", "Cancer", "CVD", "Education", "Income")
-chest_clogit(crude = "Endpoint ~ Diabetes + strata(mid)",
-             xlist = vlist, data = diab_df)
+chest_clogit(
+  crude = "Endpoint ~ Diabetes + strata(mid)",
+  xlist = vlist, data = diab_df
+)
 }
 \seealso{
 chest

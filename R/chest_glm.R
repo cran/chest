@@ -22,75 +22,92 @@
 #' @return A table with effect estimates and their changes at all steps.
 #' @seealso \code{'glm'} \pkg{'stats'}
 #' @examples
-#' chest_glm(crude = "Endpoint ~ Diabetes", xlist = c("Age", "Sex", "Married"),
-#' na_omit=TRUE, data = diab_df)
+#' chest_glm(
+#'   crude = "Endpoint ~ Diabetes", xlist = c("Age", "Sex", "Married"),
+#'   na_omit = TRUE, data = diab_df
+#' )
 #' @name chest_glm
 chest_glm <- function(
-  crude, xlist, data,
-  family = "binomial",
-  method = "glm.fit",
-  na_omit = TRUE,
-  indicate = FALSE,
-  plus = "  + ",
-  ...) {
-  pick <- variables <- est <- se <- Change <- p <- lb <- ub <- n<- c()
+                      crude, xlist, data,
+                      family = "binomial",
+                      method = "glm.fit",
+                      na_omit = TRUE,
+                      indicate = FALSE,
+                      plus = "  + ",
+                      ...) {
+  pick <- variables <- est <- se <- Change <- p <- lb <- ub <- n <- c()
   n_xlist <- length(xlist)
   data <- data.frame(c(data[all.vars(as.formula(crude))], data[xlist]))
-  if (na_omit) {data <- na.omit(data)}
+  if (na_omit) {
+    data <- na.omit(data)
+  }
   mod_crude <- glm(
     as.formula(crude),
     family = family,
     method = method,
     data = data,
-    ...)
+    ...
+  )
   mod0 <- broom::tidy(
     mod_crude,
     exponentiate = TRUE,
-    conf.int = TRUE)
+    conf.int = TRUE
+  )
   n[1] <- stats::nobs(mod_crude)
-  est[1] = mod0$estimate[2]
-  p[1] = mod0$p.value[2]
-  lb[1] = mod0$conf.low[2]
-  ub[1] = mod0$conf.high[2]
+  est[1] <- mod0$estimate[2]
+  p[1] <- mod0$p.value[2]
+  lb[1] <- mod0$conf.low[2]
+  ub[1] <- mod0$conf.high[2]
   variables[1] <- c("Crude")
   initial_model <- crude
-  for (i in 2:(n_xlist+1)) {
+  for (i in 2:(n_xlist + 1)) {
     mod <- glm(as.formula(crude),
-               family = family, method = method,
-               data = data,
-               ...)
+      family = family, method = method,
+      data = data,
+      ...
+    )
     hr_0 <- broom::tidy(mod, exponentiate = TRUE)$estimate[2]
-    models <- lapply(xlist, function(x)
-                        update(mod, as.formula(paste0(". ~ . +", x))))
-    hr_1 <- unlist(lapply(models, function(x)
-      broom::tidy(x, exponentiate = TRUE)$estimate[2]))
-    p_1 <- unlist(lapply(models, function(x)
-      broom::tidy(x)$p.value[2]))
-    chg <- (hr_1-hr_0)*100/hr_0
-    lb_1 <- unlist(lapply(models, function(x)
-      broom::tidy(x, exponentiate = TRUE,
-                  conf.int = T)$conf.low[2]))
-    ub_1  <- unlist(lapply(models, function(x)
-      broom::tidy(x, exponentiate = TRUE,
-                  conf.int = T)$conf.high[2]))
-    n_1 <- unlist(lapply(models, function(x)
-      stats::nobs(x)))
+    models <- lapply(xlist, function(x) {
+      update(mod, as.formula(paste0(". ~ . +", x)))
+    })
+    hr_1 <- unlist(lapply(models, function(x) {
+      broom::tidy(x, exponentiate = TRUE)$estimate[2]
+    }))
+    p_1 <- unlist(lapply(models, function(x) {
+      broom::tidy(x)$p.value[2]
+    }))
+    chg <- (hr_1 - hr_0) * 100 / hr_0
+    lb_1 <- unlist(lapply(models, function(x) {
+      broom::tidy(x,
+        exponentiate = TRUE,
+        conf.int = T
+      )$conf.low[2]
+    }))
+    ub_1 <- unlist(lapply(models, function(x) {
+      broom::tidy(x,
+        exponentiate = TRUE,
+        conf.int = T
+      )$conf.high[2]
+    }))
+    n_1 <- unlist(lapply(models, function(x) {
+      stats::nobs(x)
+    }))
     pick[i] <- xlist[which.max(abs(chg))]
     xlist <- xlist[-which(xlist %in% paste0(pick[i]))]
     crude <- paste0(crude, "+", paste0(pick[i]), collapse = " + ")
-    variables[i] = paste0(plus, pick[i])
-    est[i] = hr_1[which.max(abs(chg))]
-    lb[i] = lb_1[which.max(abs(chg))]
-    ub[i] = ub_1[which.max(abs(chg))]
-    Change[i] = chg[which.max(abs(chg))]
-    p[i] = p_1[which.max(abs(chg))]
-    n[i] = n_1[which.max(abs(chg))]
+    variables[i] <- paste0(plus, pick[i])
+    est[i] <- hr_1[which.max(abs(chg))]
+    lb[i] <- lb_1[which.max(abs(chg))]
+    ub[i] <- ub_1[which.max(abs(chg))]
+    Change[i] <- chg[which.max(abs(chg))]
+    p[i] <- p_1[which.max(abs(chg))]
+    n[i] <- n_1[which.max(abs(chg))]
     if (indicate) {
-      cat("\r",i, "out of", n_xlist + 1)
+      cat("\r", i, "out of", n_xlist + 1)
     }
   }
   cat(" ", "\n")
-  out   <- data.frame(variables, est, lb, ub, Change)
+  out <- data.frame(variables, est, lb, ub, Change)
   tab_out <- data.frame(out, p, n)
   row.names(tab_out) <- NULL
   fun <- "chest_glm"

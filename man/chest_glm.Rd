@@ -49,8 +49,10 @@ confounders) to the model sequentially. The order of variables to be added is
 based on the magnitudes of the changes in effect estimates.
 }
 \examples{
-chest_glm(crude = "Endpoint ~ Diabetes", xlist = c("Age", "Sex", "Married"),
-na_omit=TRUE, data = diab_df)
+chest_glm(
+  crude = "Endpoint ~ Diabetes", xlist = c("Age", "Sex", "Married"),
+  na_omit = TRUE, data = diab_df
+)
 }
 \seealso{
 \code{'glm'} \pkg{'stats'}
