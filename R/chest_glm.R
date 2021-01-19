@@ -80,13 +80,13 @@ chest_glm <- function(
     lb_1 <- unlist(lapply(models, function(x) {
       broom::tidy(x,
         exponentiate = TRUE,
-        conf.int = T
+        conf.int = TRUE
       )$conf.low[2]
     }))
     ub_1 <- unlist(lapply(models, function(x) {
       broom::tidy(x,
         exponentiate = TRUE,
-        conf.int = T
+        conf.int = TRUE
       )$conf.high[2]
     }))
     n_1 <- unlist(lapply(models, function(x) {

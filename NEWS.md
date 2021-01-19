@@ -1,3 +1,6 @@
+# chest 0.3.5
+Fix the issue between 'broom::tidy' 0.7.3 and the new version of 'speedglm' 0.3-3. 'chest_speedglm' no longer depends on 'broom'.
+
 # chest 0.3.4
 Fix a issue that 'broom:tidy' could not pick up p values from 'speedglm' models. 
 

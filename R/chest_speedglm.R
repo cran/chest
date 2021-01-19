@@ -42,9 +42,6 @@ chest_speedglm <- function(
   if (na_omit) {
     data <- na.omit(data)
   }
-  as_num <- function(x) {
-    ifelse(is.numeric(x), x, as.numeric(as.character(x)))
-  }
   mod_crude <- speedglm::speedglm(
     as.formula(crude),
     family = family,
@@ -52,16 +49,30 @@ chest_speedglm <- function(
     data = data,
     ...
   )
-  mod0 <- broom::tidy(
-    mod_crude,
-    exponentiate = TRUE,
-    conf.int = TRUE
-  )
-  n[1] <- mod_crude$n
-  est[1] <- as_num(mod0$estimate[2])
-  p[1] <- as_num(summary(mod_crude)$coefficients$`Pr(>|z|)`[2])
-  lb[1] <- as_num(mod0$conf.low[2])
-  ub[1] <- as_num(mod0$conf.high[2])
+
+#  temp fix until broom update
+  my_tidy <- function(x) {
+    estimate <- conf.low <- conf.high <- NULL
+    a_1 <- summary(x)$coefficients %>%
+      tibble::as_tibble(rownames = "term")
+    colnames(a_1) <- c("term", "estimate", "std.error", "statistic", "p.value")
+    a_ci <- confint(x) %>%
+      tibble::as_tibble(rownames = "term")
+    colnames(a_ci) <- c("term", "conf.low", "conf.high")
+    result <- dplyr::left_join(a_1, a_ci, by = "term") %>%
+      mutate(
+        estimate = exp(estimate),
+        conf.low = exp(conf.low),
+        conf.high = exp(conf.high)
+      )
+    result
+  }
+  mod0 <- my_tidy(mod_crude) # mod0 <- broom::tidy(mod_crude, exponentiate = TRUE, conf.int = TRUE)
+  n[1] <- stats::nobs(mod_crude)
+  est[1] <- mod0$estimate[2]
+  p[1] <- mod0$p.value[2]
+  lb[1] <- mod0$conf.low[2]
+  ub[1] <- mod0$conf.high[2]
   variables[1] <- c("Crude")
   initial_model <- crude
   for (i in 2:(n_xlist + 1)) {
@@ -72,7 +83,8 @@ chest_speedglm <- function(
       data = data,
       ...
     )
-    hr_0 <- as_num(broom::tidy(mod, exponentiate = TRUE)$estimate[2])
+
+    hr_0 <- my_tidy(mod)$estimate[2] # hr_0 <- broom::tidy(mod, exponentiate = TRUE)$estimate[2]
     models <- lapply(xlist, function(x) {
       speedglm::speedglm(
         as.formula(paste(crude, "+", x)),
@@ -83,23 +95,21 @@ chest_speedglm <- function(
       )
     })
     hr_1 <- unlist(lapply(models, function(x) {
-      as_num(broom::tidy(x, exponentiate = TRUE)$estimate[2])
+      my_tidy(x)$estimate[2]  # broom::tidy(x, exponentiate = TRUE)$estimate[2]
     }))
-    p_1 <- as.numeric(unlist(lapply(models, function(x) summary(x)$coefficients$`Pr(>|z|)`[2])))
+    p_1 <- unlist(lapply(models, function(x) {
+      my_tidy(x)$p.value[2]  # broom::tidy(x)$p.value[2]
+      }))
     chg <- (hr_1 - hr_0) * 100 / hr_0
     lb_1 <- unlist(lapply(models, function(x) {
-      as_num(broom::tidy(x,
-        exponentiate = TRUE,
-        conf.int = TRUE
-      )$conf.low[2])
+      my_tidy(x)$conf.low[2] #broom::tidy(x, exponentiate = TRUE, conf.int = TRUE)$conf.low[2]
     }))
     ub_1 <- unlist(lapply(models, function(x) {
-      as_num(broom::tidy(x,
-        exponentiate = TRUE,
-        conf.int = TRUE
-      )$conf.high[2])
+      my_tidy(x)$conf.high[2] #broom::tidy(x, exponentiate = TRUE, conf.int = TRUE)$conf.high[2]
     }))
-    n_1 <- unlist(lapply(models, function(x) x$n))
+    n_1 <- unlist(lapply(models, function(x) {
+      stats::nobs(x)
+    }))
     pick[i] <- xlist[which.max(abs(chg))]
     xlist <- xlist[-which(xlist %in% paste0(pick[i]))]
     crude <- paste0(crude, "+", paste0(pick[i]), collapse = " + ")
@@ -108,12 +118,13 @@ chest_speedglm <- function(
     lb[i] <- lb_1[which.max(abs(chg))]
     ub[i] <- ub_1[which.max(abs(chg))]
     Change[i] <- chg[which.max(abs(chg))]
-    p[i] <- as.numeric(as.character(p_1[which.max(abs(chg))]))
+    p[i] <- p_1[which.max(abs(chg))]
     n[i] <- n_1[which.max(abs(chg))]
     if (indicate) {
       cat("\r", i, "out of", n_xlist + 1)
     }
   }
+  cat(" ", "\n")
   out <- data.frame(variables, est, lb, ub, Change)
   tab_out <- data.frame(out, p, n)
   row.names(tab_out) <- NULL
