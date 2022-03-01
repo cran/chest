@@ -50,7 +50,7 @@ chest_speedglm <- function(
     ...
   )
 
-#  temp fix until broom update
+  #  temp fix until broom update
   my_tidy <- function(x) {
     estimate <- conf.low <- conf.high <- NULL
     a_1 <- summary(x)$coefficients %>%
@@ -95,17 +95,17 @@ chest_speedglm <- function(
       )
     })
     hr_1 <- unlist(lapply(models, function(x) {
-      my_tidy(x)$estimate[2]  # broom::tidy(x, exponentiate = TRUE)$estimate[2]
+      my_tidy(x)$estimate[2] # broom::tidy(x, exponentiate = TRUE)$estimate[2]
     }))
     p_1 <- unlist(lapply(models, function(x) {
-      my_tidy(x)$p.value[2]  # broom::tidy(x)$p.value[2]
-      }))
+      my_tidy(x)$p.value[2] # broom::tidy(x)$p.value[2]
+    }))
     chg <- (hr_1 - hr_0) * 100 / hr_0
     lb_1 <- unlist(lapply(models, function(x) {
-      my_tidy(x)$conf.low[2] #broom::tidy(x, exponentiate = TRUE, conf.int = TRUE)$conf.low[2]
+      my_tidy(x)$conf.low[2] # broom::tidy(x, exponentiate = TRUE, conf.int = TRUE)$conf.low[2]
     }))
     ub_1 <- unlist(lapply(models, function(x) {
-      my_tidy(x)$conf.high[2] #broom::tidy(x, exponentiate = TRUE, conf.int = TRUE)$conf.high[2]
+      my_tidy(x)$conf.high[2] # broom::tidy(x, exponentiate = TRUE, conf.int = TRUE)$conf.high[2]
     }))
     n_1 <- unlist(lapply(models, function(x) {
       stats::nobs(x)
@@ -129,8 +129,9 @@ chest_speedglm <- function(
   tab_out <- data.frame(out, p, n)
   row.names(tab_out) <- NULL
   fun <- "chest_speedglm"
-  family <- family$family
+  family <-  mod_crude$family$family
   lst_ret <- list(tab_out, fun, family)
   names(lst_ret) <- c("data", "fun", "family")
   lst_ret
 }
+

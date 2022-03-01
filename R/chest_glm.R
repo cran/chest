@@ -111,9 +111,7 @@ chest_glm <- function(
   tab_out <- data.frame(out, p, n)
   row.names(tab_out) <- NULL
   fun <- "chest_glm"
-  if (class(family) == "family") {
-    family <- family$family
-  }
+  family <- mod_crude$family$family
   lst_ret <- list(tab_out, fun, family)
   names(lst_ret) <- c("data", "fun", "family")
   lst_ret

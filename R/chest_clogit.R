@@ -111,3 +111,4 @@ chest_clogit <- function(
   names(lst_ret) <- c("data", "fun", "family")
   lst_ret
 }
+
