@@ -18,7 +18,7 @@ chest_forest(
 }
 \arguments{
 \item{data}{\emph{Object} from \code{chest_cox}, \code{chest_glm},
-\code{chest_speedglm}, \code{chest_lm}, \code{chest_clogit}, or \code{chest_nb},
+\code{chest_lm}, \code{chest_clogit}, or \code{chest_nb},
 including effect estimate values and change-in-estimate values.}
 
 \item{var_lab}{\emph{Character} string for the column name of variables in the graph.}

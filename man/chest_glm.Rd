@@ -40,8 +40,8 @@ However, any other variables can also be included here as the initial model.}
 A table with effect estimates and their changes at all steps.
 }
 \description{
-Please note: There is a faster option: \code{'chest_speedglm'}. \code{'chest_glm'}
-is used to assess confounding effects using Generalized Linear Models, such as
+Please note: \code{'chest_glm'} is used to assess confounding effects using
+Generalized Linear Models, such as
 logistic regression and Poisson regression with \code{'glm'}.
 It presents \emph{odds ratios} or \emph{rate ratios} for the association
 between exposure and outcome variables by adding other variables (potential

@@ -29,7 +29,7 @@ chest_plot(
 }
 \arguments{
 \item{data}{\emph{Object} from \code{chest_cox}, \code{chest_glm},
-\code{chest_speedglm}, \code{chest_lm}, \code{chest_clogit}, or \code{chest_nb},
+\code{chest_lm}, \code{chest_clogit}, or \code{chest_nb},
 including effect estimate values and change-in-estimate values.}
 
 \item{no_values}{Suppress effect estimate values in plot, default is FALSE.}
@@ -77,8 +77,8 @@ a ggplot object.
 Plot effect estimate and change-in-estimate values (ggplot type)
 }
 \examples{
-vlist <- c("Age", "Sex", "Married", "Cancer", "CVD", "Education", "Income")
-results <- chest_speedglm(
+vlist <- c("Age", "Sex", "Married", "Education", "Income")
+results <- chest_glm(
   crude = "Endpoint ~ Diabetes",
   xlist = vlist, na_omit = TRUE, data = diab_df
 )

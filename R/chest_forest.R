@@ -5,7 +5,7 @@
 #' @export
 #' @import forestplot
 #' @param data \emph{Object} from \code{chest_cox}, \code{chest_glm},
-#' \code{chest_speedglm}, \code{chest_lm}, \code{chest_clogit}, or \code{chest_nb},
+#' \code{chest_lm}, \code{chest_clogit}, or \code{chest_nb},
 #' including effect estimate values and change-in-estimate values.
 #' @param var_lab \emph{Character} string for the column name of variables in the graph.
 #' @param est_lab \emph{Character} string for the column name of effect estimates.

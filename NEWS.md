@@ -1,3 +1,6 @@
+# chest 0.3.7
+'chest_speedglm' removed. 
+
 # chest 0.3.6
 Fix the last released version's CRAN status: NOTE
 

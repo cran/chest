@@ -43,80 +43,10 @@ cohort design for Cox Proportional Hazards Models, cross-sectional
 design for Logistic Regression Model and matched cohort design for
 Conditional logistic regression Models.
 
-### chest\_speedglm: report odds ratios at all steps with logistic regression models
-
-``` r
-library(chest)
-chest_speedglm(
-  crude = "Endpoint ~ Diabetes",
-  xlist = c("Age", "Sex", "Married", "Smoke", "Cancer", "CVD","Education", "Income"), 
-  zero = 1, data = diab_df)
-```
-
-<img src="man/figures/README-chest_speedglm_1-1.png" width="100%" />
-
-    #>       variables       OR       lb       ub      Change        p    n
-    #> 1         Crude 2.312758 1.838975 2.908604          NA 7.57e-13 2372
-    #> 2         + Age 3.348051 2.500654 4.482605  44.7644279 4.83e-16 2372
-    #> 3      + Income 2.940581 2.153766 4.014836 -12.1703550 1.13e-11 2061
-    #> 4         + CVD 2.831739 2.068823 3.875994  -3.7013899 8.09e-11 2061
-    #> 5       + Smoke 2.930687 2.135170 4.022595   3.4942324 2.84e-11 2061
-    #> 6         + Sex 2.901284 2.113594 3.982528  -1.0032733 4.38e-11 2061
-    #> 7   + Education 2.881540 2.096819 3.959939  -0.6805040 6.81e-11 2051
-    #> 8      + Cancer 2.863889 2.083367 3.936828  -0.6125761 9.11e-11 2051
-    #> 9     + Married 2.878757 2.093150 3.959219   0.5191530 7.88e-11 2048
-
-Odds ratios showing the association between *Diabetes* and mortality
-*Endpoint* after each of other factors added to the model.
-
-### When the list of variables is long, generate a variable list first:
-
-``` r
-vlist <- c("Age", "Sex", "Married", "Smoke", "Cancer", "CVD","Education", "Income")
-chest_speedglm(
-  crude = "Endpoint ~ Diabetes",
-  xlist = vlist,   zero = 1, data = diab_df)
-```
-
-<img src="man/figures/README-speedglm_2-1.png" width="100%" />
-
-    #>       variables       OR       lb       ub      Change        p    n
-    #> 1         Crude 2.312758 1.838975 2.908604          NA 7.57e-13 2372
-    #> 2         + Age 3.348051 2.500654 4.482605  44.7644279 4.83e-16 2372
-    #> 3      + Income 2.940581 2.153766 4.014836 -12.1703550 1.13e-11 2061
-    #> 4         + CVD 2.831739 2.068823 3.875994  -3.7013899 8.09e-11 2061
-    #> 5       + Smoke 2.930687 2.135170 4.022595   3.4942324 2.84e-11 2061
-    #> 6         + Sex 2.901284 2.113594 3.982528  -1.0032733 4.38e-11 2061
-    #> 7   + Education 2.881540 2.096819 3.959939  -0.6805040 6.81e-11 2051
-    #> 8      + Cancer 2.863889 2.083367 3.936828  -0.6125761 9.11e-11 2051
-    #> 9     + Married 2.878757 2.093150 3.959219   0.5191530 7.88e-11 2048
-
-### Remove missing values, and change non-effect line
-
-``` r
-chest_speedglm(
-  crude = "Endpoint ~ Diabetes", xlist = vlist, 
-  data = diab_df, zero = c(0.98, 1.02),  na_omit = TRUE)
-```
-
-<img src="man/figures/README-speedglm_3-1.png" width="100%" />
-
-    #>       variables       OR       lb       ub       Change        p    n
-    #> 1         Crude 2.305786 1.809862 2.937600           NA 1.37e-11 2048
-    #> 2         + Age 3.297099 2.421755 4.488837  42.99238627 3.50e-14 2048
-    #> 3      + Income 2.902046 2.125534 3.962238 -11.98183743 2.00e-11 2048
-    #> 4         + CVD 2.797882 2.044220 3.829405  -3.58931015 1.32e-10 2048
-    #> 5       + Smoke 2.900600 2.113218 3.981361   3.67127605 4.39e-11 2048
-    #> 6         + Sex 2.872333 2.092484 3.942824  -0.97453037 6.65e-11 2048
-    #> 7     + Married 2.894543 2.107594 3.975330   0.77324421 5.19e-11 2048
-    #> 8      + Cancer 2.881019 2.097209 3.957769  -0.46723505 6.52e-11 2048
-    #> 9   + Education 2.878757 2.093150 3.959219  -0.07851916 7.88e-11 2048
 
 ### chest\_glm: Logistic regression using (generalized linear models, ‘glm’).
 
-‘chest\_glm’ is slower than ‘chest\_speedglm’. We can use ‘indicate =
-TRUE’ to monitor the progress. If it is too slow, you may want to try
-‘chest\_speedglm’.
+‘chest\_glm’ is slow. We can use ‘indicate = TRUE’ to monitor the progress. 
 
 ``` r
  chest_glm(crude = "Endpoint ~ Diabetes", xlist = vlist, data = diab_df, indicate = TRUE)
@@ -167,6 +97,4 @@ chest_clogit(crude = "Endpoint ~ Diabetes + strata(mid)",
 ## Note:
 
 Because ‘chest’ fits many models and compares effect estimates, some
-analyses may take long time to complete. In that case, consider
-‘chest\_speedglm’ for logistic regression and ‘chest\_clogit’ with an
-argument of approximate method for conditional logistic regression.
+analyses may take long time to complete. 

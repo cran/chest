@@ -1,7 +1,7 @@
 #' Assessing confounding effects using Generalized Linear regression models
 #'
-#' Please note: There is a faster option: \code{'chest_speedglm'}. \code{'chest_glm'}
-#' is used to assess confounding effects using Generalized Linear Models, such as
+#' Please note: \code{'chest_glm'} is used to assess confounding effects using
+#' Generalized Linear Models, such as
 #' logistic regression and Poisson regression with \code{'glm'}.
 #' It presents \emph{odds ratios} or \emph{rate ratios} for the association
 #' between exposure and outcome variables by adding other variables (potential

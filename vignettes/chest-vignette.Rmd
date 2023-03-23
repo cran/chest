@@ -44,93 +44,8 @@ names(diab_df)
 ### Data: diabetes and mortality 
 A data frame 'diab_df' is used to examine the association between `Diabetes` and mortality `Endpoint`. The purpose of using this data set is to demonstrate the use of the functions in this package rather than answering any research questions. 
 
-### 'chest_speedglm': report odds ratios at all steps with logistic regression models 
-
-```{r chest_speedglm_1, fig.height=5.5, fig.width = 6}
-results <- chest_speedglm(
-  crude = "Endpoint ~ Diabetes",
-  xlist = c("Age", "Sex", "Married", "Smoke", "Cancer", "CVD","Education", "Income"),
-  data = diab_df)
-results$data
-```
-
-We can also use 'chest_plot' to show the results above as a 'ggplot' object.  
-
-```{r chest_speedglm_plot, fig.height=5, fig.width = 6}
-results <- chest_speedglm(
-  crude = "Endpoint ~ Diabetes",
-  xlist = c("Age", "Sex", "Married", "Smoke", "Cancer", "CVD","Education", "Income"),
-  data = diab_df)
-chest_plot(results)
-```
-
-We adjust the location of the values. 
-
-```{r chest_speedglm_plot_2, fig.height=4, fig.width = 6}
-results <- chest_speedglm(
-  crude = "Endpoint ~ Diabetes",
-  xlist = c("Age", "Sex", "Married", "Smoke", "Cancer", "CVD","Education", "Income"),
-  data = diab_df)
-p <- chest_plot(results, nudge_y = 0, value_position = 5)  
-p + scale_x_continuous(breaks = c(0.5, 1:4), limits = c(0.5, 8))
-```
-
-Or remove the values. 
-
-```{r chest_speedglm_plot_3, fig.height=4, fig.width = 6}
-results <- chest_speedglm(
-  crude = "Endpoint ~ Diabetes",
-  xlist = c("Age", "Sex", "Married", "Smoke", "Cancer", "CVD","Education", "Income"),
-  data = diab_df)
-chest_plot(results, no_values = TRUE)  
-```
-
-Users can also use 'chest_forest' to call 'forestplot' package.  
-
-```{r chest_speedglm_forest, fig.height=4, fig.width = 6}
-results <- chest_speedglm(
-  crude = "Endpoint ~ Diabetes",
-  xlist = c("Age", "Sex", "Married", "Smoke", "Cancer", "CVD","Education", "Income"),
-  data = diab_df)
-  chest_forest(results)  
-```
-
-All Odds ratios are for the association between `Diabetes` and mortality `Endpoint` after each of other factors added to the model sequentially. 
-
-* *Step 1*: Started with a model: `speedglm(endpoint ~ diabetes)`. The odds ratio for diabetes was presented in the row marked as `Crude`.  
-
-* *Step 2*: Each of 8 variables was separately added to the above model, and  `chest_speedglm` compared odds ratios from those eight models to identify the one which created the largest change. The variable `Age` was selected and added to the model. 
-
-* *Step 3*: Repeat Step 2 with the remaining 7 variables. The variable `income` was selected and added. 
-
-* *Step 4* to *Step 9* repeated the same procedure until all variables were added. We can see after adding age and income variables add other variables had little impact on the odds ratio estimates, and odds ratio estimates remained positive on the right hand side of non-effect line. In this case, 'chest' shows one table with the results after fitting 37 total models: 1 crude model plus 36 (8 + 7 + 6 +5 + 4 + 3 + 2 + 1) models.    
-
-### When the list of variables is long, or the same list to be used repeatedly, generate a object of variable list: 
-
-```{r, speedglm_2, fig.height=6.4, fig.width = 5.4}
-vlist <- c("Age", "Sex", "Married", "Smoke", "Cancer", "CVD","Education", "Income")
-results <- chest_speedglm(
-  crude = "Endpoint ~ Diabetes",
-  xlist = vlist, data = diab_df)
-  results$data 
-  chest_plot(results)
-```
-
-## Add terms such as an interaction between Age and Sex, and age squared 
-
-```{r, speedglm_4, fig.height=6, fig.width = 6.4}
-diab_df$Age_Sex <- diab_df$Age*diab_df$Sex 
-diab_df$Age2 = diab_df$Age^2
-vlist_1<-c("Age", "Sex", "Age2", "Age_Sex", "Married", "Cancer", "CVD", "Education", "Income")
-results <- chest_speedglm(crude = "Endpoint ~ Diabetes", xlist = vlist_1, data = diab_df)
-
-chest_plot(results)
-
-chest_forest(results)
-```
-
 ### chest_glm: Logistic regression using (generalized linear models, glm). 
-'chest_glm' is slower than 'chest_speedglm'. We can use `indicate = TRUE` to monitor the progress. If it is too slow, you may want to try 'chest_speedglm'. 
+'chest_glm' is slow. We can use `indicate = TRUE` to monitor the progress. 
 
 ```{r, chest_glm, eval=FALSE}
 vlist <- c("Age", "Sex", "Married", "Smoke", "Education")
@@ -141,7 +56,7 @@ results <- chest_glm(crude = "Endpoint ~ Diabetes", xlist = vlist,
 ### chest_cox: Using Cox Proportional Hazards Models: 'coxph' of 'survival' package
 
 ```{r, coxhp, fig.height=5, fig.width = 6.4}
-
+vlist <- c("Age", "Sex", "Married", "Smoke", "Education")
 results <- chest_cox(crude = "Surv(t0, t1, Endpoint) ~ Diabetes", 
                      xlist = vlist, data = diab_df)
 chest_plot(results)
@@ -165,7 +80,7 @@ chest_plot(results)
 ```
 
 ## Notes:
-* Because 'chest' fits many models and compares effect estimates, some analyses may take long time to complete. In that case, consider 'chest_speedglm' for logistic regression and 'chest_clogit' with an argument of approximate method for conditional logistic regression. 
+* Because 'chest' fits many models and compares effect estimates, some analyses may take long time to complete. 
 * Possible alternative explanations: Although a large change the presence of possible confounding effects, we also need to keep in mind alternative explanations. 
    + Different sample sizes: When different models are fitted using different sample sizes due to missing values, this may also contribute to the change in effect estimates. The change can partly reflect the selection bias. Removing all the missing values can be helpful for distinguish the two. 
    + Intermediate measurements: Some variables in observational studies may be the intermediate factors of the causal pathway. This is more a design issue than a analysis issue. The package can be used to identify the change-in-effect estimates but cannot be used to distinguish confounding factors from intermediate factors. 

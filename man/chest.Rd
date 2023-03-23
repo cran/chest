@@ -22,14 +22,12 @@ In clinical trials and epidemiological studies, the association
  variables is added to the model. \code{'chest'} returns a graph and a data frame (table) with
  effect estimates (95\% CI) and change (\%) values. The package currently has the following main
  functions: \code{'chest_lm'} for linear regression, \code{'chest_glm'} for logistic
- regression and Poisson regression, \code{'chest_speedglm'} using \code{'speedlm'} as
- a faster alternative of \code{'chest_glm'}, \code{'chest_clogit'} for matched logistic
+ regression and Poisson regression, \code{'chest_clogit'} for matched logistic
  regression, \code{'chest_nb'} for negative binomial regression and \code{'chest_cox'} for
  Cox proportional hazards models.
 }
 \examples{
 
-? chest_speedglm
 ? chest_glm
 ? chest_cox
 ? chest_clogit
